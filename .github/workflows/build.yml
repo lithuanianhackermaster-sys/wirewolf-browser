@@ -1,0 +1,23 @@
+name: Build Wirewolf
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Qt & CMake
+      run: |
+        choco install qt --version=6.6.0 -y
+        choco install cmake -y
+    - name: Configure
+      run: |
+        mkdir build && cd build
+        cmake -DCMAKE_PREFIX_PATH="C:\Qt\6.6.0\msvc2019_64" -DWEBVIEW2_SDK_PATH="C:\webview2-sdk" ..
+    - name: Build
+      run: cmake --build build --config Release
+    - name: Upload EXE
+      uses: actions/upload-artifact@v3
+      with:
+        name: wirewolf-exe
+        path: build\Release\Wirewolf.exe
